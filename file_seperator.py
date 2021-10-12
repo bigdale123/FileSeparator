@@ -4,17 +4,28 @@ import sys
 import zipfile
 
 def separator(path):
+    platform = sys.platform
     for file in os.listdir(path):
         name = file.split("_")[0]
         print(name)
-        if(os.path.isdir(path+"\\"+name) == True):
-            shutil.move(path+"\\"+file, path+"\\"+name+"\\"+file)
+        if(platform == "win32"):
+            if(os.path.isdir(path+"\\"+name) == True):
+                shutil.move(path+"\\"+file, path+"\\"+name+"\\"+file)
+            else:
+                os.mkdir(path+"\\"+name)
+                shutil.move(path+"\\"+file, path+"\\"+name+"\\"+file)
+            if(file.endswith(".zip")):
+                with zipfile.ZipFile(path+"\\"+name+"\\"+file, 'r') as zip_ref:
+                    zip_ref.extractall(path+"\\"+name+"\\"+file.split("_")[-1][:-4])
         else:
-            os.mkdir(path+"\\"+name)
-            shutil.move(path+"\\"+file, path+"\\"+name+"\\"+file)
-        if(file.endswith(".zip")):
-            with zipfile.ZipFile(path+"\\"+name+"\\"+file, 'r') as zip_ref:
-                zip_ref.extractall(path+"\\"+name+"\\"+file.split("_")[-1][:-4])
+            if(os.path.isdir(path+"/"+name) == True):
+                shutil.move(path+"/"+file, path+"/"+name+"/"+file)
+            else:
+                os.mkdir(path+"/"+name)
+                shutil.move(path+"/"+file, path+"/"+name+"/"+file)
+            if(file.endswith(".zip")):
+                with zipfile.ZipFile(path+"/"+name+"/"+file, 'r') as zip_ref:
+                    zip_ref.extractall(path+"/"+name+"/"+file.split("_")[-1][:-4])
         
 
 
